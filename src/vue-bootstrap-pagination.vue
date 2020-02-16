@@ -1,112 +1,154 @@
 <template>
-    <nav>
-        <ul class="pagination" v-if="pagination.last_page > 0" :class="sizeClass">
-            <li v-if="showPrevious()" :class="{ 'disabled' : pagination.current_page <= 1 }">
-                <span v-if="pagination.current_page <= 1">
-                    <span aria-hidden="true">{{ config.previousText }}</span>
-                </span>
-
-                <a href="#" v-if="pagination.current_page > 1 " :aria-label="config.ariaPrevioius" @click.prevent="changePage(pagination.current_page - 1)">
-                    <span aria-hidden="true">{{ config.previousText }}</span>
-                </a>
-            </li>
-
-            <li v-for="num in array" :class="{ 'active' : num === pagination.current_page }">
-                <a href="#" @click.prevent="changePage(num)">{{ num }}</a>
-            </li>
-
-            <li v-if="showNext()" :class="{ 'disabled' : pagination.current_page === pagination.last_page || pagination.last_page === 0 }">
-                <span v-if="pagination.current_page === pagination.last_page || pagination.last_page === 0">
-                    <span aria-hidden="true">{{ config.nextText }}</span>
-                </span>
-
-                <a href="#" v-if="pagination.current_page < pagination.last_page" :aria-label="config.ariaNext" @click.prevent="changePage(pagination.current_page + 1)">
-                    <span aria-hidden="true">{{ config.nextText }}</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+  <nav v-if="total > 0">
+    <a 
+      v-for="(navPage, index) in pages" 
+      :key="index"
+      href="#"
+      @click.prevent="pageChange(navPage, index)"
+      :class="{ active: navPage === page, disabled: isDisabled(page, index) }"
+      :aria-disabled="isDisabled(navPage, index)">
+        <span v-html="content(navPage, index)"></span>
+    </a>
+  </nav>
 </template>
 
 <script>
 export default {
   props: {
-    pagination: {
-      type: Object,
+    total: {
+      type: Number,
       required: true,
+      validator: (total) => total >= 0
     },
-    callback: {
-      type: Function,
-      required: true,
+    page: {
+      type: Number,
+      default: 0,
+      validator: (page) => page >= 0
     },
-    options: {
-      type: Object,
+    perPage: {
+      type: Number,
+      default: 10,
+      validator: (perPage) => perPage > 0
     },
-    size: {
+    maxShown: {
+      type: Number,
+      default: 3,
+      validator: (maxShown) => maxShown > 0
+    },
+    navBack: {
       type: String,
+      default: '«'
     },
+    navFront: {
+      type: String,
+      default: '»'
+    }
   },
   computed: {
-    array() {
-      if (this.pagination.last_page <= 0) {
-        return [];
-      }
-      let from = this.pagination.current_page - this.config.offset;
-      if (from < 1) {
-        from = 1;
-      }
-      let to = from + (this.config.offset * 2);
-      if (to >= this.pagination.last_page) {
-        to = this.pagination.last_page;
-      }
-      const arr = [];
-      while (from <= to) {
-        arr.push(from);
-        from += 1;
-      }
-      return arr;
+    startFrom () {
+      return this.page * this.perPage
     },
-    config() {
-      return Object.assign({
-        offset: 3,
-        ariaPrevious: 'Previous',
-        ariaNext: 'Next',
-        previousText: '«',
-        nextText: '»',
-        alwaysShowPrevNext: false,
-      }, this.options);
+    endAt () {
+      let ending = this.startFrom + this.perPage
+      
+      return ending > this.total ? this.total : ending;
     },
-    sizeClass() {
-      if (this.size === 'large') {
-        return 'pagination-lg';
-      } else if (this.size === 'small') {
-        return 'pagination-sm';
+    totalPages () {
+      if (!this.perPage) {
+        return this.perPage
       }
-      return '';
+
+      return Math.ceil(this.total / this.perPage)
     },
-  },
-  watch: {
-    'pagination.per_page'(newVal, oldVal) { // eslint-disable-line
-      if (+newVal !== +oldVal) {
-        this.callback();
+    midRange () {
+      return this.maxShown / 2
+    },
+    midFilter() {
+      let pageRange = [
+          ...Array(this.totalPages).keys(),
+      ].slice(2, -2)
+
+      if (pageRange.length > this.maxShown) {
+          if (this.belowMidRange(pageRange)) {
+              return pageRange.slice(0, this.maxShown)
+          } else if (this.aboveMidRange(pageRange)) {
+              return pageRange.slice(-this.maxShown)
+          } else {
+              return pageRange.filter(page => {
+                  let diffPage = this.page - page
+                  return (diffPage < 0) 
+                    ? Math.abs(diffPage) <= this.midRange 
+                    : diffPage < this.midRange
+              })
+          }
       }
+
+      return null
     },
+    pages() {
+      let midPages = this.midFilter
+      let pages = midPages
+        ? [
+            midPages[0] - 1 === 1 ? 1 : '...',
+            ...midPages,
+            midPages[midPages.length - 1] + 1 === this.totalPages - 2 ? this.totalPages - 2 : '...',
+          ]
+        : [
+            ...Array(this.totalPages - 2).keys(),
+          ].map(page => page + 1)
+
+      return [
+        this.page - 1,
+        0,
+        ...pages,
+        this.totalPages - 1,
+        this.page + 1
+      ]
+    }
   },
   methods: {
-    showPrevious() {
-      return this.config.alwaysShowPrevNext || this.pagination.current_page > 1;
+    aboveMidRange (range) {
+      return this.page - range[range.length - 1] >= -this.midRange
     },
-    showNext() {
-      return this.config.alwaysShowPrevNext ||
-          this.pagination.current_page < this.pagination.last_page;
+    belowMidRange (range) {
+      return this.page - range[0] < this.midRange
     },
-    changePage(page) {
-      if (this.pagination.current_page === page) {
-        return;
+    content (page, index) {
+      if (index === 0) {
+        return this.navBack
       }
-      this.$set(this.pagination, 'current_page', page);
-      this.callback();
+
+      if (index === this.pages.length - 1) {
+        return this.navFront
+      }
+
+      if (page === '...') {
+        return page
+      }
+
+      return page + 1
     },
-  },
-};
+    isDisabled (page, index) {
+      if (this.page === 0 && index === 0) {
+        return true
+      }
+
+      if (this.pages.length - 1 === index && this.page === this.totalPages - 1) {
+        return true
+      }
+
+      return false
+    },
+    pageChange (page, index) {
+      if (page <= 0 || page === '...' || page >= this.totalPages) {
+        return
+      }
+
+      this.$emit('page-change', (index === 0 || index === this.pages.length - 1)
+        ? page
+        : page + 1
+      )
+    }
+  }
+}
 </script>
