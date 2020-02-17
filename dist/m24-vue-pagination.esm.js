@@ -66,7 +66,7 @@ var script = {
     midFilter: function midFilter () {
       var this$1 = this;
 
-      var pageRange = [].concat( Array(this.totalPages).keys() ).slice(2, -2);
+      var pageRange = Array.from(Array(this.totalPages).keys()).slice(2, -2);
 
       if (pageRange.length > this.maxShown) {
         if (this.belowMidRange(pageRange)) {
@@ -92,7 +92,7 @@ var script = {
           midPages[0] - 1 === 1 ? 1 : '...' ].concat( midPages,
           [midPages[midPages.length - 1] + 1 === this.totalPages - 2 ? this.totalPages - 2 : '...']
         )
-        : [].concat( Array(this.totalPages - 2).keys() ).map(function (page) { return page + 1; });
+        : Array.from(Array(this.totalPages - 2).keys()).map(function (page) { return page + 1; });
 
       return [
         this.page - 1,

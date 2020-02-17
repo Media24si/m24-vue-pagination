@@ -64,9 +64,7 @@ export default {
       return this.maxShown / 2
     },
     midFilter () {
-      const pageRange = [
-        ...Array(this.totalPages).keys()
-      ].slice(2, -2)
+      const pageRange = Array.from(Array(this.totalPages).keys()).slice(2, -2)
 
       if (pageRange.length > this.maxShown) {
         if (this.belowMidRange(pageRange)) {
@@ -93,9 +91,7 @@ export default {
           ...midPages,
           midPages[midPages.length - 1] + 1 === this.totalPages - 2 ? this.totalPages - 2 : '...'
         ]
-        : [
-          ...Array(this.totalPages - 2).keys()
-        ].map(page => page + 1)
+        : Array.from(Array(this.totalPages - 2).keys()).map(page => page + 1)
 
       return [
         this.page - 1,
