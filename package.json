@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Simple Vue.js pagination",
   "jsnext": "dist/bundle.js",
-  "main": "dist/vue-bootstrap-pagination.common.js",
-  "module": "dist/vue-bootstrap-pagination.esm.js",
+  "main": "dist/m24-vue-pagination.common.js",
+  "module": "dist/m24-vue-pagination.esm.js",
   "directories": {
     "src": "src",
     "dist": "dist"
