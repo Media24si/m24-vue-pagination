@@ -6,17 +6,16 @@ import fs from 'fs'
 const pack = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8'))
 
 export default {
-  entry: 'src/index.js',
-  targets: [
-    { format: 'es', dest: `dist/${pack.name}.esm.js` },
-    { format: 'cjs', dest: `dist/${pack.name}.common.js` }
+  input: 'src/index.js',
+  output: [
+    { format: 'es', file: `dist/${pack.name}.esm.js` },
+    { format: 'cjs', file: `dist/${pack.name}.common.js` }
   ],
   plugins: [
     vue({
-        compileTemplate: true,
-        standalone: true
+      compileTemplate: true,
+      standalone: true
     }),
     buble()
-  ],
-  useStrict: false
+  ]
 }

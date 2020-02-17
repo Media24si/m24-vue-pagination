@@ -4,10 +4,10 @@
       v-for="(navPage, index) in pages"
       :key="index"
       href="#"
-      @click.prevent="pageChange(navPage, index)"
       :class="{ active: navPage === page, disabled: isDisabled(page, index) }"
-      :aria-disabled="isDisabled(navPage, index)">
-        <span v-html="content(navPage, index)"></span>
+      :aria-disabled="isDisabled(navPage, index)"
+      @click.prevent="pageChange(navPage, index)">
+      <span v-html="content(navPage, index)" />
     </a>
   </nav>
 </template>
@@ -49,9 +49,9 @@ export default {
       return this.page * this.perPage
     },
     endAt () {
-      let ending = this.startFrom + this.perPage
+      const ending = this.startFrom + this.perPage
 
-      return ending > this.total ? this.total : ending;
+      return ending > this.total ? this.total : ending
     },
     totalPages () {
       if (!this.perPage) {
@@ -63,39 +63,39 @@ export default {
     midRange () {
       return this.maxShown / 2
     },
-    midFilter() {
-      let pageRange = [
-          ...Array(this.totalPages).keys(),
+    midFilter () {
+      const pageRange = [
+        ...Array(this.totalPages).keys()
       ].slice(2, -2)
 
       if (pageRange.length > this.maxShown) {
-          if (this.belowMidRange(pageRange)) {
-              return pageRange.slice(0, this.maxShown)
-          } else if (this.aboveMidRange(pageRange)) {
-              return pageRange.slice(-this.maxShown)
-          } else {
-              return pageRange.filter(page => {
-                  let diffPage = this.page - page
-                  return (diffPage < 0)
-                    ? Math.abs(diffPage) <= this.midRange
-                    : diffPage < this.midRange
-              })
-          }
+        if (this.belowMidRange(pageRange)) {
+          return pageRange.slice(0, this.maxShown)
+        } else if (this.aboveMidRange(pageRange)) {
+          return pageRange.slice(-this.maxShown)
+        } else {
+          return pageRange.filter(page => {
+            const diffPage = this.page - page
+            return (diffPage < 0)
+              ? Math.abs(diffPage) <= this.midRange
+              : diffPage < this.midRange
+          })
+        }
       }
 
       return null
     },
-    pages() {
-      let midPages = this.midFilter
-      let pages = midPages
+    pages () {
+      const midPages = this.midFilter
+      const pages = midPages
         ? [
-            midPages[0] - 1 === 1 ? 1 : '...',
-            ...midPages,
-            midPages[midPages.length - 1] + 1 === this.totalPages - 2 ? this.totalPages - 2 : '...',
-          ]
+          midPages[0] - 1 === 1 ? 1 : '...',
+          ...midPages,
+          midPages[midPages.length - 1] + 1 === this.totalPages - 2 ? this.totalPages - 2 : '...'
+        ]
         : [
-            ...Array(this.totalPages - 2).keys(),
-          ].map(page => page + 1)
+          ...Array(this.totalPages - 2).keys()
+        ].map(page => page + 1)
 
       return [
         this.page - 1,
