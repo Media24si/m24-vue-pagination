@@ -1,87 +1,49 @@
 # vue-pagination
-Vue pagination component for use with Bootstrap and Laravel pagination.
+Simple unstyled Vue pagination component.
 
 <p align="center">
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License" />
   </a>
-  <a href="https://npmjs.org/package/vue-bootstrap-pagination">
-    <img src="https://img.shields.io/npm/v/vue-bootstrap-pagination.svg?style=flat-square" alt="Packagist" />
+  <a href="https://npmjs.org/package/m24-vue-pagination">
+    <img src="https://img.shields.io/npm/v/m24-vue-pagination.svg?style=flat-square" alt="Packagist" />
   </a>
 </p>
 
-* [Vue.js](http://vuejs.org/) (tested with 2.2.1).
-* [Bootstrap CSS](http://getbootstrap.com/) (tested with 3.3.7)
-
-To use with Vue.js 1 use the 1x version.
-
-Laravel is not required as long as the pagination object contains the required attributes
-* current_page,
-* last_page,
-* per_page,
+* [Vue.js](http://vuejs.org/) (tested with 2.6.11).
 
 ### Installation
 ```
-npm install --save vue-bootstrap-pagination
-```
-
-or
-
-```
-yarn add vue-bootstrap-pagination
+npm install --save m24-vue-pagination
 ```
 
 ### Example
 ```js
-import pagination from 'vue-bootstrap-pagination'
+import pagination from 'm24-vue-pagination'
 
 new Vue({
   el: '#app',
-  data() {
-    return {
-      items: [],
-      pagination: {
-        total: 0,
-        per_page: 12,    // required
-        current_page: 1, // required
-        last_page: 0,    // required
-        from: 1,
-        to: 12
-      },
-      paginationOptions: {
-        offset: 4,
-        previousText: 'Prev',
-        nextText: 'Next',
-        alwaysShowPrevNext: true
-      }
-    }
+  data: {
+    total: 0,
+    currentPage: 1,
+    items: [],
+  },
+  mounted () {
+    this.loadData(this.currentPage)
   },
   methods: {
-    loadData() {
+    loadData(page) {
       const options = {
         params: {
-          paginate: this.pagination.per_page,
-          page: this.pagination.current_page,
-          /* additional parameters */
+          page: this.currentPage
         }
-      };
-      this.$http.get('/getData', options)
+      }
+
+      window.axios.get('/getData', options)
         .then(response => {
-          this.items = response.data.data;
-        
-          // Overwrite pagination object
-          this.pagination = response.data.pagination; // API response edited to have pagination data under pagination object
-        
-          // Or overwrite only values
-          /*
-            this.pagination.current_page = response.data.current_page;
-            this.pagination.last_page = response.data.last_page;
-            ...
-          */
+          this.items = response.data.data
+          this.total = response.data.paginate.total
          })
-         .catch(error => {
-            // handle error
-         });
     }
   },
   components: {
@@ -96,31 +58,27 @@ new Vue({
     <li class="list-group-item" v-for="item in items">{{ item.name }}</li>
   </ul>
 
-  <pagination :pagination="pagination" :callback="loadData" :options="paginationOptions"></pagination>
+  <pagination
+    :total="total"
+    :page="currentPage"
+    @page-change="loadData" />
 </body>
 ```
 
 #### Props
 | Name          | Type     | Default | Required | Description
 | :------------ | :--------| :-------| :--------| :-----------
-| pagination    | Object   |         | true     | Pagination object used to create pagination
-| callback      | Function |         | true     | Callback function used to load data for selected page
-| options       | Object   |         |          | Configuration. Look below for available options
-| size          | String   |         |          | Change the default size of the pagination. Options: large, small.
+| total         | Number   |         | true     | Total number of items
+| page          | Number   | 0       |          | The current page number
+| perPage       | Number   | 10      |          | Number of items per page
+| maxShown      | Number   | 5       |          | Number of items shown on each site
+| navBack       | String   | «       |          | Back indicator (can be HTML, such as svg, icon...)
+| navFront      | String   | »       |          | Forward indicator (can be HTML, such as svg, icon...)
 
-Offset prop has ben removed with version 2.10.0. Use `options.offset` instead
-
-##### Options
-| Name                | String  | Default     | Description
-| :-------------------| :-------| :-----------| :-------
-| offset              | Number  | 3           | Left and right offset of pagination numbers to display
-| ariaPrevious        | String  | Previous    | Change default aria previous text
-| ariaNext            | String  | Next        | Change default aria next text
-| previousText        | String  | «           | Change default previous button text
-| nextText            | String  | »           | Change default next button text
-| alwaysShowPrevNext  | Boolean | false       | Show prev/next button even if on first/last page
-
-If you change `this.pagination.per_page` the callback function will be called
+### Events
+| Name          | Returns  | Description
+| :------------ | :--------| :-----------
+| page-change    | selected page | Event that sends back the selected page
 
 ## Contributing
 

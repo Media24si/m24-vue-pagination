@@ -1,7 +1,7 @@
 <template>
   <nav v-if="total > 0">
-    <a 
-      v-for="(navPage, index) in pages" 
+    <a
+      v-for="(navPage, index) in pages"
       :key="index"
       href="#"
       @click.prevent="pageChange(navPage, index)"
@@ -50,7 +50,7 @@ export default {
     },
     endAt () {
       let ending = this.startFrom + this.perPage
-      
+
       return ending > this.total ? this.total : ending;
     },
     totalPages () {
@@ -76,8 +76,8 @@ export default {
           } else {
               return pageRange.filter(page => {
                   let diffPage = this.page - page
-                  return (diffPage < 0) 
-                    ? Math.abs(diffPage) <= this.midRange 
+                  return (diffPage < 0)
+                    ? Math.abs(diffPage) <= this.midRange
                     : diffPage < this.midRange
               })
           }

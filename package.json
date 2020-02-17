@@ -1,7 +1,7 @@
 {
-  "name": "vue-bootstrap-pagination",
-  "version": "2.10.3",
-  "description": "Pagination for vuejs with combination with bootstrap and Laravel's pagination",
+  "name": "m24-vue-pagination",
+  "version": "1.0.0",
+  "description": "Simple Vue.js pagination",
   "jsnext": "dist/bundle.js",
   "main": "dist/vue-bootstrap-pagination.common.js",
   "module": "dist/vue-bootstrap-pagination.esm.js",
@@ -21,26 +21,29 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Media24si/vue-pagination.git"
+    "url": "git+https://github.com/Media24si/m24-vue-pagination.git"
   },
-  "homepage": "https://github.com/Media24si/vue-pagination",
+  "homepage": "https://github.com/Media24si/m24-vue-pagination",
   "keywords": [
     "vue",
     "component",
     "laravel",
     "pagination"
   ],
-  "author": "pogachar",
-  "contributors": [
-    { "name": "Adam Stradovnik" }
-  ],
+  "author": {
+    "name": "Adam Stradovnik",
+    "email": "adam.stradovnik@gmail.com",
+    "url": "https://github.com/Neoglyph/"
+  },
   "license": "MIT",
   "dependencies": {
     "vue": "latest"
   },
   "devDependencies": {
+    "@rollup/plugin-buble": "^0.21.1",
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^6.1.2",
+    "rollup-plugin-vue": "^5.1.6",
     "standard": "^14.3.1"
   }
 }

@@ -1,3 +1,3 @@
-import VueBootstrapPagination from './vue-bootstrap-pagination.vue';
+import VueBootstrapPagination from './vue-bootstrap-pagination.vue'
 
-export default VueBootstrapPagination;
+export default VueBootstrapPagination
