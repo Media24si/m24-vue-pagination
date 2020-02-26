@@ -84,6 +84,14 @@ export default {
       return null
     },
     pages () {
+      if (this.totalPages === 1) {
+        return [
+          0,
+          0,
+          0
+        ]
+      }
+
       const midPages = this.midFilter
       const pages = midPages
         ? [

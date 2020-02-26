@@ -86,6 +86,14 @@ var script = {
       return null
     },
     pages: function pages () {
+      if (this.totalPages === 1) {
+        return [
+          0,
+          0,
+          0
+        ]
+      }
+
       var midPages = this.midFilter;
       var pages = midPages
         ? [
