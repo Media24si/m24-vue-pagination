@@ -1,6 +1,6 @@
 {
   "name": "m24-vue-pagination",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Simple Vue.js pagination",
   "jsnext": "dist/bundle.js",
   "main": "dist/m24-vue-pagination.common.js",
