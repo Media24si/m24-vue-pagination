@@ -33,6 +33,7 @@ new Vue({
   },
   methods: {
     loadData(page) {
+      this.currentPage = page
       const options = {
         params: {
           page: this.currentPage
