@@ -73,7 +73,7 @@ export default {
           return pageRange.slice(-this.maxShown)
         } else {
           return pageRange.filter(page => {
-            const diffPage = this.page - page
+            const diffPage = this.page - 1 - page
             return (diffPage < 0)
               ? Math.abs(diffPage) <= this.midRange
               : diffPage < this.midRange
@@ -91,7 +91,7 @@ export default {
           ...midPages,
           midPages[midPages.length - 1] + 1 === this.totalPages - 2 ? this.totalPages - 2 : '...'
         ]
-        : Array.from(Array(this.totalPages - 2).keys()).map(page => page + 1)
+        : Array.from(Array(Math.abs(this.totalPages - 2)).keys()).map(page => page + 1)
 
       return [
         this.page - 1,
@@ -136,7 +136,7 @@ export default {
       return false
     },
     pageChange (page, index) {
-      if (page <= 0 || page === '...' || page >= this.totalPages) {
+      if (page < 0 || (page === 0 && index === 0) || page === '...' || page >= this.totalPages) {
         return
       }
 

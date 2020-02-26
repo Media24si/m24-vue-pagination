@@ -77,7 +77,7 @@ var script = {
           return pageRange.slice(-this.maxShown)
         } else {
           return pageRange.filter(function (page) {
-            var diffPage = this$1.page - page;
+            var diffPage = this$1.page - 1 - page;
             return (diffPage < 0)
               ? Math.abs(diffPage) <= this$1.midRange
               : diffPage < this$1.midRange
@@ -94,7 +94,7 @@ var script = {
           midPages[0] - 1 === 1 ? 1 : '...' ].concat( midPages,
           [midPages[midPages.length - 1] + 1 === this.totalPages - 2 ? this.totalPages - 2 : '...']
         )
-        : Array.from(Array(this.totalPages - 2).keys()).map(function (page) { return page + 1; });
+        : Array.from(Array(Math.abs(this.totalPages - 2)).keys()).map(function (page) { return page + 1; });
 
       return [
         this.page - 1,
@@ -138,7 +138,7 @@ var script = {
       return false
     },
     pageChange: function pageChange (page, index) {
-      if (page <= 0 || page === '...' || page >= this.totalPages) {
+      if (page < 0 || (page === 0 && index === 0) || page === '...' || page >= this.totalPages) {
         return
       }
 
