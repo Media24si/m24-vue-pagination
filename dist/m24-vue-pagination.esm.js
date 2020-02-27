@@ -132,19 +132,34 @@ var script = {
 
       return page + 1
     },
+    isActive: function isActive (page, index) {
+      if (index === 0 || index === this.pages.length - 1) {
+        return false
+      }
+
+      if (page !== this.page - 1) {
+        return false
+      }
+
+      return true
+    },
     isDisabled: function isDisabled (page, index) {
-      if (this.page === 0 && index === 0) {
+      if (this.page === 1 && index === 0) {
         return true
       }
 
-      if (this.pages.length - 1 === index && this.page === this.totalPages - 1) {
+      if (this.pages.length - 1 === index && this.page === this.totalPages) {
         return true
       }
 
       return false
     },
     pageChange: function pageChange (page, index) {
-      if (page < 0 || (page === 0 && index === 0) || page === '...' || page >= this.totalPages) {
+      if (this.isActive(page, index) || this.isDisabled(this.page, index)) {
+        return
+      }
+
+      if (page < 0 || (page === 0 && index === 0) || page === '...' || page > this.totalPages) {
         return
       }
 
@@ -248,7 +263,7 @@ var __vue_render__ = function() {
             {
               key: index,
               class: {
-                active: navPage === _vm.page,
+                active: _vm.isActive(navPage, index),
                 disabled: _vm.isDisabled(_vm.page, index)
               },
               attrs: {

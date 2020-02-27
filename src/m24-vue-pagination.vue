@@ -4,7 +4,7 @@
       v-for="(navPage, index) in pages"
       :key="index"
       href="#"
-      :class="{ active: navPage === page, disabled: isDisabled(page, index) }"
+      :class="{ active: isActive(navPage, index), disabled: isDisabled(page, index) }"
       :aria-disabled="isDisabled(navPage, index)"
       @click.prevent="pageChange(navPage, index)">
       <span v-html="content(navPage, index)" />
@@ -132,19 +132,34 @@ export default {
 
       return page + 1
     },
+    isActive (page, index) {
+      if (index === 0 || index === this.pages.length - 1) {
+        return false
+      }
+
+      if (page !== this.page - 1) {
+        return false
+      }
+
+      return true
+    },
     isDisabled (page, index) {
-      if (this.page === 0 && index === 0) {
+      if (this.page === 1 && index === 0) {
         return true
       }
 
-      if (this.pages.length - 1 === index && this.page === this.totalPages - 1) {
+      if (this.pages.length - 1 === index && this.page === this.totalPages) {
         return true
       }
 
       return false
     },
     pageChange (page, index) {
-      if (page < 0 || (page === 0 && index === 0) || page === '...' || page >= this.totalPages) {
+      if (this.isActive(page, index) || this.isDisabled(this.page, index)) {
+        return
+      }
+
+      if (page < 0 || (page === 0 && index === 0) || page === '...' || page > this.totalPages) {
         return
       }
 
